@@ -1,19 +1,21 @@
 // backend/server.js
 const express = require('express');
 const { pool } = require('./db');
+const cors = require('cors');
 const app = express();
 const PORT = 3001;
 
 app.use(express.json());
+app.use(cors()); // Activation de CORS pour toutes les routes
 
 // Route de test pour vérifier la connexion à la base de données
 app.get('/test', (req, res) => {
-    pool.query('SELECT 1 + 1 AS solution', (error, results) => {
-        if (error) throw error;
-        res.send(`La réponse est: ${results[0].solution}`);
-    });
+	pool.query('SELECT 1 + 1 AS solution', (error, results) => {
+		if (error) throw error;
+		res.send(`La réponse est: ${results[0].solution}`);
+	});
 });
 
 app.listen(PORT, () => {
-    console.log(`Serveur démarré sur le port ${PORT}`);
+	console.log(`Serveur démarré sur le port ${PORT}`);
 });
