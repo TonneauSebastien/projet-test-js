@@ -5,6 +5,7 @@ import { getAllUsers, createUser, updateUserById, deleteUserById } from './servi
 function App() {
 	const [users, setUsers] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [initialLoading, setInitialLoading] = useState(true);
 
 	useEffect(() => {
 		// Fonction pour charger les utilisateurs
@@ -12,6 +13,7 @@ function App() {
 			const usersData = await getAllUsers();
 			setUsers(usersData);
 			setLoading(false);
+			setInitialLoading(false); // Désactiver le chargement initial après le premier chargement
 		};
 
 		fetchUsers(); // Chargez immédiatement les utilisateurs une première fois
@@ -39,8 +41,18 @@ function App() {
 	};
 
 	const handleDeleteUser = async (id) => {
-		await deleteUserById(id);
-		setUsers(users.filter((user) => user.id !== id));
+		try {
+			const deleteUserResponse = await deleteUserById(id);
+			// Logique pour gérer la réponse, par exemple :
+			if (deleteUserResponse.success) {
+				setUsers(users.filter(user => user.id !== id));
+			} else {
+				// Gérer le cas où la suppression n'a pas fonctionné
+			}
+		} catch (error) {
+			console.error("Failed to delete user: ", error);
+			// Ici vous pouvez par exemple afficher une alerte à l'utilisateur
+		}
 	};
 
 	// Ici vous pouvez ajouter un formulaire pour créer un utilisateur,
@@ -54,12 +66,16 @@ function App() {
 	return (
 		<div>
 			<h1>Utilisateurs</h1>
-			{users.map((user) => (
-				<div key={user.id}>
-					{user.username} - {user.role}
-					{/* Ajouter des boutons ou des actions pour modifier et supprimer */}
-				</div>
-			))}
+			{users.length > 0 ? (
+				users.map((user) => (
+					<div key={user.id}>
+						{user.username} - {user.role}
+						<button onClick={() => handleDeleteUser(user.id)}>Supprimer</button>
+					</div>
+				))
+			) : (
+				<p>Aucun utilisateur trouvé.</p>
+			)}
 		</div>
 	);
 }

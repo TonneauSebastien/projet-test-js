@@ -49,8 +49,11 @@ app.put('/test/:id', (req, res) => {
 	const { username, password, role } = req.body;
 	const query = "UPDATE test SET username = ?, password = ?, role = ? WHERE id = ?";
 	pool.query(query, [username, password, role, id], (error, results) => {
-		if (error) throw error;
-		res.send(`Utilisateur avec l'ID: ${id} a été mis à jour.`);
+		if (error) {
+			res.status(500).json({ success: false, message: `Utilisateur avec l'ID: ${id} a été mis à jour.` });
+		} else {
+			res.status(200).json({ success: true, message: `Utilisateur avec l'ID : ${id} a été mis à jour` });
+		}
 	});
 });
 
@@ -58,10 +61,17 @@ app.put('/test/:id', (req, res) => {
 app.delete('/test/:id', (req, res) => {
 	const { id } = req.params;
 	pool.query('DELETE FROM test WHERE id = ?', [id], (error, results) => {
-		if (error) throw error;
-		res.send(`Utilisateur avec l'ID: ${id} a été supprimé.`);
+		if (error) {
+			// Si une erreur survient, renvoyez une réponse JSON avec le message d'erreur.
+			console.error(error);
+			res.status(500).json({ success: false, message: "Une erreur s'est produite lors de la suppression." });
+		} else {
+			// Sinon, renvoyez une réponse JSON confirmant la suppression.
+			res.status(200).json({ success: true, message: `Utilisateur avec l'ID: ${id} a été supprimé.` });
+		}
 	});
 });
+
 
 
 app.listen(PORT, () => {

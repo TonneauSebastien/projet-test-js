@@ -63,6 +63,11 @@ export const deleteUserById = async (id) => {
 		const response = await fetch(`${API_URL}/${id}`, {
 			method: 'DELETE'
 		});
+
+		if (!response.ok) {
+			throw new Error('Server responded with an error: ' + response.statusText);
+		}
+
 		return await response.json();
 	} catch (error) {
 		console.error("Error fetching data: ", error);
