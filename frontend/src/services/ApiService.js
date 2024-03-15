@@ -1,8 +1,8 @@
-const API_URL = 'http://localhost:3001/test';
+// const API_URL = 'http://localhost:3001/test';
 
 export const getAllUsers = async () => {
 	try {
-		const response = await fetch(API_URL);
+		const response = await fetch(process.env.REACT_APP_API_URL);
 		if (!response.ok) {
 			throw new Error('Network response was not ok ' + response.statusText);
 		}
@@ -15,7 +15,7 @@ export const getAllUsers = async () => {
 
 export const getUserById = async (id) => {
 	try {
-		const response = await fetch(`${API_URL}/${id}`);
+		const response = await fetch(`${process.env.REACT_APP_API_URL}/${id}`);
 		if (!response.ok) {
 			throw new Error('Network response was not ok');
 		}
@@ -28,7 +28,7 @@ export const getUserById = async (id) => {
 
 export const createUser = async (userData) => {
 	try {
-		const response = await fetch(API_URL, {
+		const response = await fetch(process.env.REACT_APP_API_URL, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ export const createUser = async (userData) => {
 
 export const updateUserById = async (id, userData) => {
 	try {
-		const response = await fetch(`${API_URL}/${id}`, {
+		const response = await fetch(`${process.env.REACT_APP_API_URL}/${id}`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export const updateUserById = async (id, userData) => {
 
 export const deleteUserById = async (id) => {
 	try {
-		const response = await fetch(`${API_URL}/${id}`, {
+		const response = await fetch(`${process.env.REACT_APP_API_URL}/${id}`, {
 			method: 'DELETE'
 		});
 
