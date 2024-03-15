@@ -2,19 +2,17 @@
 const express = require('express');
 const { pool } = require('./db');
 const cors = require('cors');
+const path = require('path');
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(cors()); // Activation de CORS pour toutes les routes
 
-// Route de test pour vérifier la connexion à la base de données
-// app.get('/test', (req, res) => {
-// 	pool.query('SELECT 1 + 1 AS solution', (error, results) => {
-// 		if (error) throw error;
-// 		res.send(`La réponse est: ${results[0].solution}`);
-// 	});
-// });
+// CRÉER UNE VARIABLE D'ENVIRONNEMENT POUR /synoptique-test/ !!!!!!!!!!!
+app.get('/synoptique-test/', (req, res) => {
+	res.send('Synoptique Test Backend is running');
+});
 
 // Route pour CREATE un utilisateur
 app.post('/test', (req, res) => {
@@ -35,7 +33,6 @@ app.post('/test', (req, res) => {
 		}
 	});
 });
-
 
 // Route pour READ tous les utilisateurs
 app.get('/test', (req, res) => {
@@ -82,8 +79,6 @@ app.delete('/test/:id', (req, res) => {
 		}
 	});
 });
-
-
 
 app.listen(PORT, () => {
 	console.log(`Serveur démarré sur le port ${PORT}`);
