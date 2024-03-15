@@ -6,6 +6,10 @@ function App() {
 	const [users, setUsers] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [initialLoading, setInitialLoading] = useState(true);
+	// États pour les champs du formulaire
+	const [username, setUsername] = useState('');
+	const [password, setPassword] = useState('');
+	const [role, setRole] = useState('');
 
 	useEffect(() => {
 		// Fonction pour charger les utilisateurs
@@ -27,10 +31,32 @@ function App() {
 		return () => clearInterval(interval);
 	}, []); // Le tableau vide indique que cet effet ne dépend d'aucune variable d'état et ne s'exécute qu'au montage
 
+	// Hooks ===============
+
 	const handleCreateUser = async (userData) => {
 		const newUser = await createUser(userData);
 		setUsers([...users, newUser]);
 	};
+
+	const handleFormSubmit = async (event) => {
+		event.preventDefault();
+		try {
+			const response = await createUser({ username, password, role });
+			if (response.success) {
+				setUsers([...users, response.user]); // Utilisez `response.user` qui contient le nouvel utilisateur
+				// Réinitialisez les champs du formulaire ici
+				setUsername('');
+				setPassword('');
+				setRole('');
+			} else {
+				// Affichez une notification d'erreur ici
+			}
+		} catch (error) {
+			console.error("Error creating user: ", error);
+			// Affichez une notification d'erreur ici
+		}
+	};
+
 
 	const handleUpdateUser = async (id, userData) => {
 		const updatedUser = await updateUserById(id, userData);
@@ -55,9 +81,7 @@ function App() {
 		}
 	};
 
-	// Ici vous pouvez ajouter un formulaire pour créer un utilisateur,
-	// des boutons pour mettre à jour et supprimer,
-	// et afficher les utilisateurs dans une liste ou un tableau.
+	// Vue ================
 
 	if (loading) {
 		return <div>Loading...</div>;
@@ -66,6 +90,40 @@ function App() {
 	return (
 		<div>
 			<h1>Utilisateurs</h1>
+			<form onSubmit={handleFormSubmit}>
+				<label>
+					Nom d'utilisateur:
+					<input
+						type="text"
+						value={username}
+						onChange={(e) => setUsername(e.target.value)}
+						required
+					/>
+				</label>
+				<br></br>
+				<label>
+					Mot de passe:
+					<input
+						type="password"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+						required
+					/>
+				</label>
+				<br></br>
+				<label>
+					Rôle:
+					<input
+						type="text"
+						value={role}
+						onChange={(e) => setRole(e.target.value)}
+						required
+					/>
+				</label>
+				<br></br>
+				<button type="submit">Créer un utilisateur</button>
+			</form>
+			<h2>Utilisateurs</h2>
 			{users.length > 0 ? (
 				users.map((user) => (
 					<div key={user.id}>

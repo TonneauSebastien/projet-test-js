@@ -20,11 +20,22 @@ app.use(cors()); // Activation de CORS pour toutes les routes
 app.post('/test', (req, res) => {
 	const { username, password, role } = req.body;
 	const query = "INSERT INTO test (username, password, role) VALUES (?, ?, ?)";
+
 	pool.query(query, [username, password, role], (error, results) => {
-		if (error) throw error;
-		res.status(201).send(`Utilisateur ajouté avec l'ID: ${results.insertId}`);
+		if (error) {
+			res.status(500).json({ success: false, message: "Erreur lors de l'ajout de l'utilisateur." });
+		} else {
+			// Créer un objet utilisateur avec les informations reçues et l'ID généré.
+			const newUser = {
+				id: results.insertId,
+				username,
+				role
+			};
+			res.status(201).json({ success: true, message: 'Utilisateur ajouté avec succès.', user: newUser });
+		}
 	});
 });
+
 
 // Route pour READ tous les utilisateurs
 app.get('/test', (req, res) => {
